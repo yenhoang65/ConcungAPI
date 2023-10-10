@@ -2,10 +2,8 @@
 
 namespace HuongDV.models
 {
-    public class contact
+    public class ContactDTO
     {
-        public int Id { get; set; }
-
         [MaxLength(100)]
         public string FirstName { get; set; } = "";
 
@@ -21,8 +19,7 @@ namespace HuongDV.models
         [MaxLength(100)]
         public string Subject { get; set; } = "";
 
+        [Required, MinLength(5), MaxLength(4000)]
         public string Message { get; set; } = "";
-
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

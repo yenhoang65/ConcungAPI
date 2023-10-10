@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbcontext>(options =>
 {
     string connectionString = builder.Configuration.GetConnectionString("concungstore")!;
-    options.UseSqlServer();
+    options.UseSqlServer(connectionString);
 });
 
 var app = builder.Build();
