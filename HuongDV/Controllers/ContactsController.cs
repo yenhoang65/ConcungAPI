@@ -2,6 +2,7 @@
 using HuongDV.services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HuongDV.Controllers
 {
@@ -11,22 +12,30 @@ namespace HuongDV.Controllers
     {
         private readonly ApplicationDbcontext context;
 
+
         public ContactsController(ApplicationDbcontext context)
         {
             this.context = context;
         }
 
-        [HttpGet]
-        public IActionResult GetContact()
+        [HttpGet("subjects")]
+        public IActionResult GetSubjects()
         {
-            var contacts = context.contacts.ToList();
+            var listSubjects = context.subjects.ToList();
+            return Ok(listSubjects);
+        }
+
+        [HttpGet]
+        public IActionResult GetContacts()
+        {
+            var contacts = context.contacts.Include(c=>c.Subject).ToList();
             return Ok(contacts);
         }
 
         [HttpGet("{id}")]
         public IActionResult Getcontact(int id)
         {
-            var contact = context.contacts.Find(id);
+            var contact = context.contacts.Include(c => c.Subject).FirstOrDefault(c => c.Id == id);
             if(contact == null)
             {
                 return NotFound();
@@ -38,13 +47,20 @@ namespace HuongDV.Controllers
         [HttpPost]
         public IActionResult CreateContact(ContactDTO contactDTO)
         {
+            var subject = context.subjects.Find(contactDTO.SubjectId);
+            if(subject == null)
+            {
+                ModelState.AddModelError("Subject", "Vui lòng chọn một chủ đề phù hợp");
+                return BadRequest(ModelState);
+            }
+
             contact contact = new contact()
             {
                 FirstName = contactDTO.FirstName,
                 LastName = contactDTO.LastName,
                 Email = contactDTO.Email,
                 Phone = contactDTO.Phone ?? "",
-                Subject = contactDTO.Subject,
+                Subject = subject,
                 Message = contactDTO.Message,
                 CreatedAt = DateTime.Now
             };
@@ -57,6 +73,13 @@ namespace HuongDV.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateContact (int id, ContactDTO contactDTO)
         {
+            var subject = context.subjects.Find(contactDTO.SubjectId);
+            if (subject == null)
+            {
+                ModelState.AddModelError("Subject", "Vui lòng chọn một chủ đề phù hợp");
+                return BadRequest(ModelState);
+            }
+
             var contact = context.contacts.Find(id);
             if(contact == null)
             {
@@ -67,7 +90,7 @@ namespace HuongDV.Controllers
             contact.LastName = contactDTO.LastName;
             contact.Email = contactDTO.Email;
             contact.Phone = contactDTO.Phone ??"";
-            contact.Subject = contactDTO.Subject;
+            contact.Subject = subject;
             contact.Message = contactDTO.Message;
             context.SaveChanges();
             return Ok(contact);
@@ -90,7 +113,7 @@ namespace HuongDV.Controllers
             //cách 2:
             try 
             {
-                var contact = new contact() { Id = id };
+                var contact = new contact() { Id = id, Subject = new Subject()};
                 context.contacts.Remove(contact);
                 context.SaveChanges();
             }

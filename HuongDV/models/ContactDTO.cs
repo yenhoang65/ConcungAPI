@@ -16,8 +16,7 @@ namespace HuongDV.models
         [MaxLength(100)]
         public string Phone { get; set; } = "";
 
-        [MaxLength(100)]
-        public string Subject { get; set; } = "";
+        public int SubjectId { get; set; }
 
         [Required, MinLength(5), MaxLength(4000)]
         public string Message { get; set; } = "";
