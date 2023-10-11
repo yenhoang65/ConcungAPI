@@ -2,6 +2,7 @@
 using HuongDV.services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace HuongDV.Controllers
@@ -26,10 +27,35 @@ namespace HuongDV.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetContacts()
+        public IActionResult GetContacts(int? page)
         {
-            var contacts = context.contacts.Include(c=>c.Subject).ToList();
-            return Ok(contacts);
+            if(page == null || page < 1)
+            {
+                page = 1;
+            }
+
+            int pageSize = 5;
+            int totalPages = 0;
+
+            decimal count = context.contacts.Count();
+            totalPages = (int) Math.Ceiling(count / pageSize);
+
+            var contacts = context.contacts
+                .Include(c=>c.Subject)
+                .OrderByDescending(c => c.Id)
+                .Skip((int)(page -1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var response = new
+            {
+                Contacts = contacts,
+                TotalPages = totalPages,
+                PageSize = pageSize,
+                Page = page
+            };
+
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
