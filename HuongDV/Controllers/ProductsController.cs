@@ -32,10 +32,131 @@ namespace HuongDV.Controllers
 
 
         [HttpGet]
-        public IActionResult GetProducts() 
+        public IActionResult GetProducts(string? search, string? DanhMuc,
+                int? minGia, int? maxGia,
+                string? sort, string? DatHang,
+                int? page)
         {
-            var products = context.products.ToList();
-            return Ok(products);
+            IQueryable<Product> query = context.products;
+
+            // chức năng tìm kiếm
+            if(search != null) 
+            {
+                query = query.Where(p => p.Name.Contains(search) || p.MoTa.Contains(search));
+            }
+
+            if(DanhMuc != null) 
+            {
+                query = query.Where(p => p.DanhMuc ==  DanhMuc);
+            }
+
+            if(minGia != null) 
+            {
+                query = query.Where(p => p.Gia >= minGia);
+            }
+
+            if (maxGia != null)
+            {
+                query = query.Where(p => p.Gia <= maxGia);
+            }
+
+            // sort functionality .. Chức năng sắp xếp
+
+            if (sort == null) sort = "id";
+            if (DatHang == null || DatHang != "asc") DatHang = "desc";
+
+            if (sort.ToLower() == "name")
+            {
+                if (DatHang == "asc")
+                {
+                    query = query.OrderBy(p => p.Name);
+                }
+                else
+                {
+                    query = query.OrderByDescending(p => p.Name);
+                }
+            }
+
+            else if (sort.ToLower() == "brand")
+            {
+                if (DatHang == "asc")
+                {
+                    query = query.OrderBy(p => p.Brand);
+                }
+                else
+                {
+                    query = query.OrderByDescending(p => p.Brand);
+                }
+            }
+
+            else if (sort.ToLower() == "danhmuc")
+            {
+                if (DatHang == "asc")
+                {
+                    query = query.OrderBy(p => p.DanhMuc);
+                }
+                else
+                {
+                    query = query.OrderByDescending(p => p.DanhMuc);
+                }
+            }
+
+            else if (sort.ToLower() == "gia")
+            {
+                if (DatHang == "asc")
+                {
+                    query = query.OrderBy(p => p.Gia);
+                }
+                else
+                {
+                    query = query.OrderByDescending(p => p.Gia);
+                }
+            }
+
+            else if (sort.ToLower() == "date")
+            {
+                if (DatHang == "asc")
+                {
+                    query = query.OrderBy(p => p.CreatedAt);
+                }
+                else
+                {
+                    query = query.OrderByDescending(p => p.CreatedAt);
+                }
+            }
+
+            else
+            {
+                if (DatHang == "asc")
+                {
+                    query = query.OrderBy(p => p.Id);
+                }
+                else
+                {
+                    query = query.OrderByDescending(p => p.Id);
+                }
+            }
+
+            // pagination functionality...chức năng phân trang
+            if(page == null || page < 1) page =1;
+            int pagesize = 5;
+            int totalPage = 0;
+
+            decimal count = query.Count();
+            totalPage = (int)Math.Ceiling(count / pagesize);
+
+            query = query.Skip((int) (page - 1) * pagesize).Take(pagesize);
+
+            var products = query.ToList();
+
+            var response = new
+            {
+                Products = products,
+                TotalPages = totalPage,
+                PageSize = pagesize,
+                Page = page
+            };
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
