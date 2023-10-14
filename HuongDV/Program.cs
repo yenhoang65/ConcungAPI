@@ -16,23 +16,27 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("2 phương thức xác thực", new OpenApiSecurityScheme
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
-        Description = "Vui lòng nhập mã thông báo",
+        Description = "Please enter token",
         In = ParameterLocation.Header,
-        Name = "Ủy quyền",
+        Name = "Authorization",
         Type = SecuritySchemeType.ApiKey
-    }) ;
+    });
 
-    // thêm thông tin bảo mật vào từng thao tác cho 2pt xác thực
+    // https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters
+    // add Security information to each operation for OAuth2
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
+
+
 
 builder.Services.AddDbContext<ApplicationDbcontext>(options =>
 {
     string connectionString = builder.Configuration.GetConnectionString("concungstore")!;
     options.UseSqlServer(connectionString);
 });
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

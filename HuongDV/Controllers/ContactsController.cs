@@ -1,5 +1,6 @@
 ﻿using HuongDV.models;
 using HuongDV.services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -26,6 +27,7 @@ namespace HuongDV.Controllers
             return Ok(listSubjects);
         }
 
+        [Authorize(Roles ="admin")]
         [HttpGet]
         public IActionResult GetContacts(int? page)
         {
@@ -58,6 +60,7 @@ namespace HuongDV.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles ="admin")]
         [HttpGet("{id}")]
         public IActionResult Getcontact(int id)
         {
@@ -96,6 +99,7 @@ namespace HuongDV.Controllers
             return Ok(contact);
         }
 
+        /*
         [HttpPut("{id}")]
         public IActionResult UpdateContact (int id, ContactDTO contactDTO)
         {
@@ -121,7 +125,9 @@ namespace HuongDV.Controllers
             context.SaveChanges();
             return Ok(contact);
         }
+        */
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public IActionResult DeleteContact(int id)
         {

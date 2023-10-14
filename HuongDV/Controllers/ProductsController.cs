@@ -1,5 +1,6 @@
 ﻿using HuongDV.models;
 using HuongDV.services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -171,6 +172,7 @@ namespace HuongDV.Controllers
             return Ok(product);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public IActionResult CrateProduct([FromForm] ProductDTO productDTO)
         {
@@ -217,7 +219,7 @@ namespace HuongDV.Controllers
             return Ok();
         }
 
-
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public IActionResult UpdateProduct(int id,[FromForm]ProductDTO productDTO)
         {
@@ -266,6 +268,7 @@ namespace HuongDV.Controllers
             return Ok(product);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public IActionResult DeleteProduct(int id)
         {

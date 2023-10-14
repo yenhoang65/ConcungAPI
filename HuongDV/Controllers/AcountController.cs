@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -126,14 +127,142 @@ namespace HuongDV.Controllers
             return Ok(response);
         }
 
+
+        //[Authorize]
+        //[HttpGet("GetTokenClaims")]
+        //public IActionResult GetTokenClaims()
+        //{
+        //    var identity = User.Identity as ClaimsIdentity;
+        //    if (identity != null)
+        //    {
+        //        Dictionary<string, string> claims = new Dictionary<string, string>();
+
+        //        foreach (Claim claim in identity.Claims)
+        //        {
+        //            claims.Add(claim.Type, claim.Value);
+        //        }
+
+        //        return Ok(claims);
+        //    }
+
+        //    return Ok();
+        //}
+
+
         [Authorize]
-        [HttpGet("AuthorizeAuthenticatedUsers")]
-        public IActionResult AuthorizeAuthenticatedUsers()
+        [HttpGet("Profile")]
+        public IActionResult GetProfile()
         {
-            return Ok("Bạn được ủy quyền");
+            int id = JwtReader.GetUserId(User);
+
+            var user = context.Users.Find(id);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var userProfileDto = new UserProfileDTO()
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Phone = user.Phone,
+                Address = user.Address,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt
+            };
+
+            return Ok(userProfileDto);
+        }
+
+        [Authorize]
+        [HttpPut("UpdateProfile")]
+        public IActionResult UpdateProfile(UserProfileUpdateDTO userProfileUpdateDTO)
+        {
+            int id = JwtReader.GetUserId(User);
+            var user = context.Users.Find(id);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            //update the user profile
+            user.FirstName = userProfileUpdateDTO.FirstName;
+            user.LastName = userProfileUpdateDTO.LastName;
+            user.Email = userProfileUpdateDTO.Email;
+            user.Phone = userProfileUpdateDTO.Phone ?? "";
+            user.Address = userProfileUpdateDTO.Address;
+
+            context.SaveChanges();
+
+
+            var userProfileDto = new UserProfileDTO()
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Phone = user.Phone,
+                Address = user.Address,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt
+            };
+
+            return Ok(userProfileDto);
+        }
+
+        //[Authorize]
+        [HttpPut("UpdatePassword")]
+        public IActionResult UpdatePassword([Required, MinLength(8),MaxLength(100)]string password)
+        {
+            int id = JwtReader.GetUserId(User);
+
+            var user = context.Users.Find(id);
+            if(user == null)
+            {
+                return Unauthorized();
+            }
+
+            // encrypt password
+            var passwordHasher = new PasswordHasher<User>();
+            string encryptedPassword = passwordHasher.HashPassword(new User(), password);
+
+
+            // update the user password
+            user.Password = encryptedPassword;
+
+            context.SaveChanges();
+
+            return Ok();
         }
 
 
+  
+       
+
+
+
+        //[Authorize]
+        //[HttpGet("AuthorizeAuthenticatedUsers")]
+        //public IActionResult AuthorizeAuthenticatedUsers()
+        //{
+        //    return Ok("Bạn được ủy quyền");
+        //}
+
+        //[Authorize(Roles ="admin")]
+        //[HttpGet("AuthorizeAdmin")]
+        //public IActionResult AuthorizeAdmin()
+        //{
+        //    return Ok("Bạn được ủy quyền");
+        //}
+
+        //[Authorize(Roles ="admin, seller")]
+        //[HttpGet("AuthorizeAdminAndseller")]
+        //public IActionResult AuthorizeAdminAndSeller()
+        //{
+        //    return Ok("Bạn được ủy quyền");
+        //}
 
         private string CreateMaTB(User user)
         {
