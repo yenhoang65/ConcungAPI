@@ -216,7 +216,7 @@ namespace HuongDV.Controllers
             context.products.Add(product);
             context.SaveChanges();
 
-            return Ok();
+            return Ok(product);
         }
 
         [Authorize(Roles = "admin")]

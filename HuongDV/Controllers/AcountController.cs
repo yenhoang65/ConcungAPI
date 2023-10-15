@@ -161,7 +161,7 @@ namespace HuongDV.Controllers
                 return Unauthorized();
             }
 
-            var userProfileDto = new UserProfileDTO()
+            var userProfileDTO = new UserProfileDTO()
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
@@ -173,7 +173,7 @@ namespace HuongDV.Controllers
                 CreatedAt = user.CreatedAt
             };
 
-            return Ok(userProfileDto);
+            return Ok(userProfileDTO);
         }
 
         [Authorize]
@@ -197,7 +197,7 @@ namespace HuongDV.Controllers
             context.SaveChanges();
 
 
-            var userProfileDto = new UserProfileDTO()
+            var userProfileDTO = new UserProfileDTO()
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
@@ -209,10 +209,10 @@ namespace HuongDV.Controllers
                 CreatedAt = user.CreatedAt
             };
 
-            return Ok(userProfileDto);
+            return Ok(userProfileDTO);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPut("UpdatePassword")]
         public IActionResult UpdatePassword([Required, MinLength(8),MaxLength(100)]string password)
         {

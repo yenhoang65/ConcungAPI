@@ -4,21 +4,21 @@
     {
         public static decimal ShippingFee { get; set; } = 5;
 
-        public static Dictionary<string, string> PaymentMethds { get; } = new()
+        public static Dictionary<string, string> PTThanhToan { get; } = new()
         {
-            {"Cash","Cash on Delivery" },
-            {"Paypal","paupal" },
-            {"Credit Card","Credit Card" }
+            {"Tiền mặt","Tiền mặt khi giao hàng" },
+            {"Paypal","paypal" },
+            {"Thẻ tín dụng","Thẻ tín dụng" }
         };
 
-        public static List<string> PaymentStatuses { get; } = new() 
+        public static List<string> TinhTrangTT { get; } = new() 
         {
-            "Pending", "Accepted", "Canceled"
+            "Đang chờ xử lý", "Đã chấp nhận", "Đã hủy"
         };
 
-        public static List<string> OrderStatus { get; } = new()
+        public static List<string> TTDatHang { get; } = new()
         {
-            "Created","Accepted"
+            "Đã tạo","Được chấp nhận","Đã vận chuyển","Đã giao hàng","Trả lại"
         };
 
         public static Dictionary<int, int> GetProductDictionary(string productidentifiers)

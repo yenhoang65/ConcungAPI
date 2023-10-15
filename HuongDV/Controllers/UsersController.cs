@@ -41,7 +41,7 @@ namespace HuongDV.Controllers
             List<UserProfileDTO> userProfiles = new List<UserProfileDTO>();
             foreach (var user in users)
             {
-                var userProfileDto = new UserProfileDTO()
+                var userProfileDTO = new UserProfileDTO()
                 {
                     Id = user.Id,
                     FirstName = user.FirstName,
@@ -53,7 +53,7 @@ namespace HuongDV.Controllers
                     CreatedAt = user.CreatedAt
                 };
 
-                userProfiles.Add(userProfileDto);
+                userProfiles.Add(userProfileDTO);
             }
 
             var response = new
@@ -76,7 +76,7 @@ namespace HuongDV.Controllers
                 return NotFound();
             }
 
-            var userProfileDto = new UserProfileDTO()
+            var userProfileDTO = new UserProfileDTO()
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
@@ -88,7 +88,7 @@ namespace HuongDV.Controllers
                 CreatedAt = user.CreatedAt
             };
 
-            return Ok(userProfileDto);
+            return Ok(userProfileDTO);
         }
     }
 }

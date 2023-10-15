@@ -13,5 +13,8 @@ namespace HuongDV.services
         public DbSet<Product> products { get; set; }
         public DbSet<Subject> subjects { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Order> Orders { get; set; }
+
     }
 }

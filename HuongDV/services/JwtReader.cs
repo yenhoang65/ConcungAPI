@@ -8,7 +8,7 @@ namespace HuongDV.services
         public static int GetUserId(ClaimsPrincipal user)
         {
             var identity = user.Identity as ClaimsIdentity;
-            if (identity != null)
+            if (identity == null)
             {
                 return 0;
             }
