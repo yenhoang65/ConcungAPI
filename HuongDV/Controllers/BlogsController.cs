@@ -157,11 +157,11 @@ namespace HuongDV.Controllers
                 return NotFound();
             }
 
-            //delete the image on the server
+            //xóa img trên máy chủ
             string iFolder = enviroment.WebRootPath + "/images/blogsImage/";
             System.IO.File.Delete(iFolder + blog.ImageFileName);
 
-            //delete the product in the database
+            //xóa sản phẩm ra khỏi database
             context.Blogs.Remove(blog);
             context.SaveChanges();
 
