@@ -20,6 +20,8 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\blogsImage\" />
+    <Folder Include="wwwroot\images\Banner\" />
+    <Folder Include="wwwroot\images\Tienich\" />
   </ItemGroup>
 
 </Project>

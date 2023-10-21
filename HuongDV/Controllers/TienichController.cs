@@ -51,7 +51,7 @@ namespace HuongDV.Controllers
             string imageFileName = DateTime.Now.ToString("yyyyMMđHHmmssfff");
             imageFileName += Path.GetExtension(tienichDTO.ImageFileName.FileName);
 
-            string imagesFoder = env.WebRootPath + "/images/Tienich";
+            string imagesFoder = env.WebRootPath + "/images/Tienich/";
             using (var stream = System.IO.File.Create(imagesFoder + imageFileName)) 
             {
                 tienichDTO.ImageFileName.CopyTo(stream);
@@ -70,16 +70,16 @@ namespace HuongDV.Controllers
         }
 
         //[HttpPut("{id}")]
-        //public IActionResult UpdateTienich(int id,[FromForm]  Tienich tienichDTO)
+        //public IActionResult UpdateTienich(int id, [FromForm] Tienich tienichDTO)
         //{
         //    var tienich = context.Tienichs.Find(id);
-        //    if(tienich == null)
+        //    if (tienich == null)
         //    {
         //        return NotFound();
         //    }
 
         //    string imageFileName = tienich.ImageFileName;
-        //    if(tienich.ImageFileName != null)
+        //    if (tienich.ImageFileName != null)
         //    {
         //        // lưu ảnh vào máy chủ
         //        imageFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
@@ -93,7 +93,7 @@ namespace HuongDV.Controllers
 
 
         //        // Xóa hình ảnh cũ
-        //        System.IO.File.Delete(imagesFoder+tienich.ImageFileName);
+        //        System.IO.File.Delete(imagesFoder + tienich.ImageFileName);
         //    }
         //    //update 
         //    tienich.Name = tienichDTO.Name;
