@@ -58,51 +58,16 @@ namespace HuongDV.Controllers
             }
 
             // lưu tienich vào database
-            Tienich tienich = new Tienich()
+            Banner banner = new Banner()
             {
-                ImageFileName = imageFileName,
+                AnhBanner = imageFileName,
                 CreatedAt = DateTime.Now
             };
-            context.Tienichs.Add(tienich);
+            context.Banners.Add(banner);
             context.SaveChanges();
-            return Ok(tienich);
+            return Ok(banner);
         }
 
-        //[HttpPut("{id}")]
-        //public IActionResult UpdateBanner(int id, [FromForm] Banner bannerDTO)
-        //{
-        //    var banner = context.Banners.Find(id);
-        //    if (banner == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    string imageFileName = banner.AnhBanner;
-        //    if(bannerDTO.AnhBanner != null)
-        //    {
-        //        // lưu ảnh vào máy chủ
-
-        //        imageFileName = DateTime.Now.ToString("yyyMMddssfff");
-        //        imageFileName += Path.GetExtension(bannerDTO.AnhBanner.FileName);
-
-        //        string imagesFolder = env.WebRootPath + "/images/products/";
-
-        //        using (var stream = System.IO.File.Create(imagesFolder + imageFileName))
-        //        {
-        //            bannerDTO.AnhBanner.CopyTo(stream);
-        //        }
-
-        //        //
-
-        //        System.IO.File.Delete(imagesFolder + banner.AnhBanner);
-        //    }
-
-        //    //up
-
-        //    banner.AnhBanner = banner.AnhBanner;
-        //    context.SaveChanges();  
-        //    return Ok();
-        //}
 
         [HttpDelete("{id}")]
         public IActionResult DeleteBanner(int id)
@@ -115,11 +80,11 @@ namespace HuongDV.Controllers
 
             //xóa ảnh trên máy chủ
 
-            string imagesFolder = env.WebRootPath + "/images/products/";
+            string imagesFolder = env.WebRootPath + "/images/Banner/";
             System.IO.File.Delete(imagesFolder + banner.AnhBanner);
 
             //xóa sản phẩm khỏi cơ sở dữ liệu
-            context.Banners.Remove(banner);
+            context.Banners .Remove(banner);
             context.SaveChanges();
             return Ok();
 

@@ -17,8 +17,7 @@ namespace HuongDV.services
         public DbSet<Order> Orders { get; set; }
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Tienich> Tienichs { get; set; }
-
         public DbSet<Banner> Banners { get; set; }
-
+        public DbSet<NPP> NPPs { get; set; }
     }
 }
