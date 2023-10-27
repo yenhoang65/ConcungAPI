@@ -20,8 +20,26 @@ namespace HuongDV.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetUser(int? page)
+        public IActionResult GetUser(int? page, string? Name,string? Phone, string? Email)
         {
+            IQueryable<User> query = context.Users; 
+            if(Name != null)
+            {
+                query = query.Where(p => p.FirstName.Contains(Name)
+                || p.LastName.Contains(Name));
+            }
+
+            if (Phone != null)
+            {
+                query = query.Where(p => p.Phone == Phone);
+            }
+
+            if (Email != null)
+            {
+                query = query.Where(p => p.Email.Contains(Email));
+            }
+
+
             if (page == null || page < 1)
             {
                 page = 1;
@@ -30,10 +48,10 @@ namespace HuongDV.Controllers
             int pageSize = 5;
             int totalPages = 0;
 
-            decimal count = context.Users.Count();
+            decimal count = query.Count();
             totalPages = (int)Math.Ceiling(count / pageSize);
 
-            var users = context.Users
+            var users = query
                 .OrderByDescending(u => u.Id)
                 .Skip((int)(page - 1) * pageSize)
                 .Take(pageSize)
@@ -89,6 +107,23 @@ namespace HuongDV.Controllers
             };
 
             return Ok(userProfileDTO);
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPut]
+        public IActionResult UpdateUserRole(int users, string role)
+        {
+            var user = context.Users.Find(users);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Cập nhật quyền của người dùng
+            user.Role = role;
+            context.SaveChanges();
+
+            return Ok("Đã cập nhập quyền thành công");
         }
     }
 }

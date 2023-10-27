@@ -5,7 +5,7 @@ namespace HuongDV.models
     public class OrderDTO
     {
         [Required]
-        public string ProductUdentifiers { get; set; } = "";
+        public string LayChuoiSP { get; set; } = "";
 
         [Required,MinLength(30),MaxLength(100)]
         public string DiachiGH { get; set; } = "";

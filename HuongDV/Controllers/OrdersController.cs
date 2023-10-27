@@ -141,7 +141,7 @@ namespace HuongDV.Controllers
                 return BadRequest(ModelState);
             }
 
-            var productDictionary = Orderhelper.GetProductDictionary(orderDTO.ProductUdentifiers);
+            var productDictionary = Orderhelper.GetProductDictionary(orderDTO.LayChuoiSP);
 
             //create a new order
             Order order = new Order();

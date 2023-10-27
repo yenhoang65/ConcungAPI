@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 
 namespace HuongDV.Controllers
 {
@@ -16,6 +17,7 @@ namespace HuongDV.Controllers
 
         private readonly List<string> listDanhMuc = new List<string>()
         {
+            // khởi tạo danh sách danh mục
             "Sữa","Bỉm","Tã","Quần Áo","Khác"
         };
 
@@ -33,17 +35,16 @@ namespace HuongDV.Controllers
 
 
         [HttpGet]
-        public IActionResult GetProducts(string? search, string? DanhMuc,
+        public IActionResult GetProducts(string? Name, string? DanhMuc,
                 int? minGia, int? maxGia,
-                string? sort, string? DatHang,
-                int? page)
+                int? page)// khai báo phương thức để tìm kiếm, lọc các sản phẩm
         {
-            IQueryable<Product> query = context.products;
+            IQueryable<Product> query = context.products;// tạo một truy vấn sử dụng Iq..cho phép mở rộng truy vấn trên các đk tìm kiếm
 
             // chức năng tìm kiếm
-            if(search != null) 
+            if(Name != null) 
             {
-                query = query.Where(p => p.Name.Contains(search) || p.MoTa.Contains(search));
+                query = query.Where(p => p.Name.Contains(Name) || p.MoTa.Contains(Name));// kiểm tra name hoặc mô tả có chứa trường name hay kh 
             }
 
             if(DanhMuc != null) 
@@ -61,85 +62,9 @@ namespace HuongDV.Controllers
                 query = query.Where(p => p.Gia <= maxGia);
             }
 
-            // sort functionality .. Chức năng sắp xếp
-
-            if (sort == null) sort = "id";
-            if (DatHang == null || DatHang != "asc") DatHang = "desc";
-
-            if (sort.ToLower() == "name")
-            {
-                if (DatHang == "asc")
-                {
-                    query = query.OrderBy(p => p.Name);
-                }
-                else
-                {
-                    query = query.OrderByDescending(p => p.Name);
-                }
-            }
-
-            else if (sort.ToLower() == "brand")
-            {
-                if (DatHang == "asc")
-                {
-                    query = query.OrderBy(p => p.Brand);
-                }
-                else
-                {
-                    query = query.OrderByDescending(p => p.Brand);
-                }
-            }
-
-            else if (sort.ToLower() == "danhmuc")
-            {
-                if (DatHang == "asc")
-                {
-                    query = query.OrderBy(p => p.DanhMuc);
-                }
-                else
-                {
-                    query = query.OrderByDescending(p => p.DanhMuc);
-                }
-            }
-
-            else if (sort.ToLower() == "gia")
-            {
-                if (DatHang == "asc")
-                {
-                    query = query.OrderBy(p => p.Gia);
-                }
-                else
-                {
-                    query = query.OrderByDescending(p => p.Gia);
-                }
-            }
-
-            else if (sort.ToLower() == "date")
-            {
-                if (DatHang == "asc")
-                {
-                    query = query.OrderBy(p => p.CreatedAt);
-                }
-                else
-                {
-                    query = query.OrderByDescending(p => p.CreatedAt);
-                }
-            }
-
-            else
-            {
-                if (DatHang == "asc")
-                {
-                    query = query.OrderBy(p => p.Id);
-                }
-                else
-                {
-                    query = query.OrderByDescending(p => p.Id);
-                }
-            }
 
             // pagination functionality...chức năng phân trang
-            if(page == null || page < 1) page =1;
+            if(page == null || page < 1) page =1;//kiểm tra page xem có phải null hoặc nhỏ hơn 1 hay kh nếu đúng thì đc thiết lập page bằng 1
             int pagesize = 5;
             int totalPage = 0;
 
@@ -148,7 +73,7 @@ namespace HuongDV.Controllers
 
             query = query.Skip((int) (page - 1) * pagesize).Take(pagesize);
 
-            var products = query.ToList();
+            var products = query.ToList();// chuyển đổi truy vấn linq thành các danh sách sản phẩm 
 
             var response = new
             {
@@ -172,11 +97,39 @@ namespace HuongDV.Controllers
             return Ok(product);
         }
 
+        [HttpGet("Top 10")]
+        public IActionResult GetTopProducts()
+        {
+            var top = context.OrderItems
+            .GroupBy(o => o.ProductId)
+            .Select(g => new
+            {
+                ProductId = g.Key,
+                TotalQuantity = g.Sum(o => o.ProductId)
+            })
+            .OrderByDescending(p => p.TotalQuantity)
+            .Take(2)
+            .Join(
+                context.products,
+                orderItem => orderItem.ProductId,
+                product => product.Id,
+                (orderItem, product) => new
+                {
+                    ProductId = product.Id,
+                    ProductName = product.Name,
+                    ProductPrice = product.Gia,
+                }
+            )
+            .ToList();
+            return Ok(top);
+        }
+
+
         [Authorize(Roles = "admin")]
         [HttpPost]
         public IActionResult CrateProduct([FromForm] ProductDTO productDTO)
         {
-            if (!listDanhMuc.Contains(productDTO.DanhMuc))
+            if (!listDanhMuc.Contains(productDTO.DanhMuc))// kiểm tra thông tin đầu vào
             {
                 ModelState.AddModelError("Danh Mục", "Vui lòng chọn danh mục hợp lệ");
                 return BadRequest(ModelState);
@@ -189,15 +142,15 @@ namespace HuongDV.Controllers
             }
 
             // lưu hình ảnh trên máy chủ
+            
+            string imageFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");//tạo ra một tệp kh chùng lặp về thời gian
+            imageFileName += Path.GetExtension(productDTO.AnhSP.FileName);// lấy đuôi exten để kh bị thay đổi đuôi ảnh trên máy
 
-            string imageFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-            imageFileName += Path.GetExtension(productDTO.AnhSP.FileName);
+            string imagesFolder = env.WebRootPath + "/images/products/";// cung cấp đuognừ dẫn ảnh
 
-            string imagesFolder = env.WebRootPath + "/images/products/";
-
-            using (var stream = System.IO.File.Create(imagesFolder + imageFileName))
+            using (var stream = System.IO.File.Create(imagesFolder + imageFileName))//File.Create() để tạo hoặc mở tệp hình ảnh mới để ghi dữ liệu.
             {
-               productDTO.AnhSP.CopyTo(stream);
+               productDTO.AnhSP.CopyTo(stream);// sao chép ảnh từ tệp gốc lên máy chủ
             }
 
             // lưu hình ảnh trên database

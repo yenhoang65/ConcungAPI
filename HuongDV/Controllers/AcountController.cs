@@ -25,14 +25,6 @@ namespace HuongDV.Controllers
             this.context = context;
         }
 
-        //[HttpGet("TestMaTB")]
-        //public IActionResult TestMaTB()
-        //{
-        //    User user = new User() { Id = 2, Role = "admin" };
-        //    string ma = CreateMaTB(user);
-        //    var response = new {matb = ma};
-        //    return Ok(response);
-        //}
 
         [HttpPost("DangKy")]
         public IActionResult DangKy(UserDTO userDTO)
@@ -57,7 +49,7 @@ namespace HuongDV.Controllers
                 Phone = userDTO.Phone ?? "",
                 Address = userDTO.Address,
                 Password = encryptedPassword,
-                Role = "client",
+                Role = "Khách hàng",
                 CreatedAt = DateTime.Now
             };
             context.Users.Add(user);
@@ -126,27 +118,6 @@ namespace HuongDV.Controllers
             };
             return Ok(response);
         }
-
-
-        //[Authorize]
-        //[HttpGet("GetTokenClaims")]
-        //public IActionResult GetTokenClaims()
-        //{
-        //    var identity = User.Identity as ClaimsIdentity;
-        //    if (identity != null)
-        //    {
-        //        Dictionary<string, string> claims = new Dictionary<string, string>();
-
-        //        foreach (Claim claim in identity.Claims)
-        //        {
-        //            claims.Add(claim.Type, claim.Value);
-        //        }
-
-        //        return Ok(claims);
-        //    }
-
-        //    return Ok();
-        //}
 
 
         [Authorize]
@@ -237,32 +208,6 @@ namespace HuongDV.Controllers
             return Ok();
         }
 
-
-  
-       
-
-
-
-        //[Authorize]
-        //[HttpGet("AuthorizeAuthenticatedUsers")]
-        //public IActionResult AuthorizeAuthenticatedUsers()
-        //{
-        //    return Ok("Bạn được ủy quyền");
-        //}
-
-        //[Authorize(Roles ="admin")]
-        //[HttpGet("AuthorizeAdmin")]
-        //public IActionResult AuthorizeAdmin()
-        //{
-        //    return Ok("Bạn được ủy quyền");
-        //}
-
-        //[Authorize(Roles ="admin, seller")]
-        //[HttpGet("AuthorizeAdminAndseller")]
-        //public IActionResult AuthorizeAdminAndSeller()
-        //{
-        //    return Ok("Bạn được ủy quyền");
-        //}
 
         private string CreateMaTB(User user)
         {

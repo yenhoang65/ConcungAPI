@@ -2,6 +2,7 @@
 using HuongDV.services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace HuongDV.Controllers
 {
@@ -16,15 +17,32 @@ namespace HuongDV.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetNPP()
+        public IActionResult GetNPP(string? name, string? phone, string? email)
         {
-            var npp = context.NPPs.ToList();
+            IQueryable<NPP> query = context.NPPs;
+            if (name != null)
+            {
+                query = query.Where(p => p.Name.Contains(Name));
+            }
+
+            if (phone != null)
+            {
+                query = query.Where(p => p.Phone == phone);
+            }
+            if (email != null)
+            {
+                query = query.Where(p => p.Email == email);
+            }
+
+            var npp = query.ToList();
             return Ok(npp);
+
         }
 
         [HttpGet("{id}")]
         public IActionResult GetNPP(int id)
         {
+
             var npp = context.NPPs.Find(id);
 
             if (npp == null)

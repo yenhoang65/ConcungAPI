@@ -21,13 +21,13 @@
             "Đã tạo","Được chấp nhận","Đã vận chuyển","Đã giao hàng","Trả lại"
         };
 
-        public static Dictionary<int, int> GetProductDictionary(string productidentifiers)
+        public static Dictionary<int, int> GetProductDictionary(string LayChuoiSP)
         {
             var productDictionary = new Dictionary<int, int>();
 
-            if(productidentifiers.Length > 0)
+            if(LayChuoiSP.Length > 0)
             {
-                string[] productIdArray = productidentifiers.Split('-');
+                string[] productIdArray = LayChuoiSP.Split('-');
                 foreach(var productId in productIdArray)
                 {
                     try
