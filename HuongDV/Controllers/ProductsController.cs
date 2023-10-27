@@ -108,7 +108,7 @@ namespace HuongDV.Controllers
                 TotalQuantity = g.Sum(o => o.ProductId)
             })
             .OrderByDescending(p => p.TotalQuantity)
-            .Take(2)
+            .Take(10)
             .Join(
                 context.products,
                 orderItem => orderItem.ProductId,
@@ -143,14 +143,14 @@ namespace HuongDV.Controllers
 
             // lưu hình ảnh trên máy chủ
             
-            string imageFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");//tạo ra một tệp kh chùng lặp về thời gian
-            imageFileName += Path.GetExtension(productDTO.AnhSP.FileName);// lấy đuôi exten để kh bị thay đổi đuôi ảnh trên máy
+            string imageFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            imageFileName += Path.GetExtension(productDTO.AnhSP.FileName);
 
-            string imagesFolder = env.WebRootPath + "/images/products/";// cung cấp đuognừ dẫn ảnh
+            string imagesFolder = env.WebRootPath + "/images/products/";
 
             using (var stream = System.IO.File.Create(imagesFolder + imageFileName))//File.Create() để tạo hoặc mở tệp hình ảnh mới để ghi dữ liệu.
             {
-               productDTO.AnhSP.CopyTo(stream);// sao chép ảnh từ tệp gốc lên máy chủ
+               productDTO.AnhSP.CopyTo(stream);
             }
 
             // lưu hình ảnh trên database

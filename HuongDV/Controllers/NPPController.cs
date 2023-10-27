@@ -29,6 +29,7 @@ namespace HuongDV.Controllers
             {
                 query = query.Where(p => p.Phone == phone);
             }
+            
             if (email != null)
             {
                 query = query.Where(p => p.Email == email);
@@ -95,7 +96,6 @@ namespace HuongDV.Controllers
             npp.Email = nppDTO.Email;
             npp.Address = nppDTO.Address;
 
-
             context.SaveChanges();
 
             return Ok(npp);
@@ -110,7 +110,6 @@ namespace HuongDV.Controllers
                 return NotFound();
             }
 
-            
             //xóa npp khỏi cơ sở dữ liệu
             context.NPPs.Remove(npp);
             context.SaveChanges();
